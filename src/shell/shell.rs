@@ -113,7 +113,11 @@ impl Shell {
                         }
                         _ => self.state = state,
                     },
-                    Err(err) => print!("{err}"),
+                    Err(err) => {
+                        print!("{err}");
+                        input.clear();
+                        self.state = State::Ready;
+                    }
                 },
                 _ => self.state = state,
             };

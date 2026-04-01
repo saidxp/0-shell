@@ -75,6 +75,10 @@ impl Parser {
                 }
 
                 if !stop_parsing_flags && token.starts_with('-') && token.len() > 1 {
+                    if token.starts_with("--") {
+                        return Err(format!("{}: unrecognized option -- '{}'\n", exec, token));
+                    }
+
                     let group = token.trim_start_matches('-');
                     if group.chars().all(|ch| config.allowed.contains(&ch)) {
                         flags.extend(group.chars().map(|ch| ch.to_string()));
