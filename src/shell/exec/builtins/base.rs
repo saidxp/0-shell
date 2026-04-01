@@ -54,7 +54,7 @@ pub fn pwd(shell: &mut Shell, _cmd: &Cmd) {
 }
 
 pub fn clear(_shell: &mut Shell, _cmd: &Cmd) {
-    print!("\x1B[2J\x1B[H");
+    print!("\x1b[H\x1b[2J\x1b[3J");
     let _ = stdout().flush();
 }
 

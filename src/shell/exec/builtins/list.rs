@@ -1,5 +1,4 @@
 use chrono::{DateTime, Duration, Local};
-use crossterm::terminal;
 use libc::{c_char, gid_t, passwd, size_t, uid_t};
 use std::ffi::CStr;
 use std::fs;
@@ -211,55 +210,7 @@ fn print_inline(items: &[String]) {
     if items.is_empty() {
         return;
     }
-    print_columns(items);
-}
-
-fn print_columns(items: &[String]) {
-    let term_width = terminal::size().map(|(w, _)| w as usize).unwrap_or(80);
-
-    let max_item_width = items.iter().map(|s| visible_len_ansi(s)).max().unwrap_or(0);
-
-    let col_width = (max_item_width + 2).max(1);
-    let cols = (term_width / col_width).max(1);
-    let rows = items.len().div_ceil(cols);
-
-    for row in 0..rows {
-        let mut line = String::new();
-        for col in 0..cols {
-            let idx = col * rows + row;
-            if idx >= items.len() {
-                continue;
-            }
-
-            let item = &items[idx];
-            if col + 1 == cols || idx + rows >= items.len() {
-                line.push_str(item);
-            } else {
-                let padding = col_width.saturating_sub(visible_len_ansi(item));
-                line.push_str(item);
-                line.push_str(&" ".repeat(padding));
-            }
-        }
-        println!("{line}");
-    }
-}
-
-fn visible_len_ansi(s: &str) -> usize {
-    let mut len = 0usize;
-    let mut chars = s.chars().peekable();
-    while let Some(ch) = chars.next() {
-        if ch == '\x1b' && chars.peek() == Some(&'[') {
-            let _ = chars.next();
-            for next in chars.by_ref() {
-                if next.is_ascii_alphabetic() {
-                    break;
-                }
-            }
-            continue;
-        }
-        len += 1;
-    }
-    len
+    println!("{}", items.join("  "));
 }
 
 fn compare_names(a: &str, b: &str) -> std::cmp::Ordering {
