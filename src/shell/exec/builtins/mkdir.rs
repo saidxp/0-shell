@@ -1,4 +1,5 @@
 use crate::shell::Shell;
+use crate::shell::exec::helper::format_io_error;
 use crate::shell::parse::Cmd;
 use std::fs;
 
@@ -10,7 +11,11 @@ pub fn mkdir(_shell: &mut Shell, cmd: &Cmd) {
 
     for p in &cmd.args {
         if let Err(e) = fs::create_dir(p) {
-            eprintln!("mkdir: cannot create directory '{}': {}", p, e);
+            eprintln!(
+                "mkdir: cannot create directory '{}': {}",
+                p,
+                format_io_error(&e)
+            );
         }
     }
 }

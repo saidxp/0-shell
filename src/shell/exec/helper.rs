@@ -1,11 +1,24 @@
 use crate::shell::BuiltinFn;
 
 use std::collections::HashMap;
+use std::io;
 
 pub use super::builtins::{
     base::{clear, echo, exit, pwd},
     cat, cd, cp, list, mkdir, mv, rm,
 };
+
+pub fn format_io_error(err: &io::Error) -> String {
+    let s = err.to_string();
+    let Some(idx) = s.rfind(" (os error ") else {
+        return s;
+    };
+    if s.ends_with(')') {
+        s[..idx].to_string()
+    } else {
+        s
+    }
+}
 
 pub fn get_builtins() -> HashMap<String, BuiltinFn> {
     HashMap::from([

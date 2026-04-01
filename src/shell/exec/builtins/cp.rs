@@ -1,4 +1,5 @@
 use crate::shell::Shell;
+use crate::shell::exec::helper::format_io_error;
 use crate::shell::parse::Cmd;
 use std::fs;
 
@@ -18,12 +19,17 @@ pub fn cp(_shell: &mut Shell, cmd: &Cmd) {
         }
         Ok(_) => {}
         Err(e) => {
-            eprintln!("cp: cannot stat '{}': {}", src, e);
+            eprintln!("cp: cannot stat '{}': {}", src, format_io_error(&e));
             return;
         }
     }
 
     if let Err(e) = fs::copy(src, dst) {
-        eprintln!("cp: cannot copy '{}' to '{}': {}", src, dst, e);
+        eprintln!(
+            "cp: cannot copy '{}' to '{}': {}",
+            src,
+            dst,
+            format_io_error(&e)
+        );
     }
 }

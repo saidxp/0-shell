@@ -1,4 +1,5 @@
 use crate::shell::Shell;
+use crate::shell::exec::helper::format_io_error;
 use crate::shell::parse::Cmd;
 use std::fs;
 use std::path::Path;
@@ -18,16 +19,16 @@ pub fn rm(_shell: &mut Shell, cmd: &Cmd) {
                 if meta.is_dir() {
                     if recursive {
                         if let Err(e) = remove_dir_recursive(path) {
-                            eprintln!("rm: cannot remove '{}': {}", p, e);
+                            eprintln!("rm: cannot remove '{}': {}", p, format_io_error(&e));
                         }
                     } else {
                         eprintln!("rm: cannot remove '{}': Is a directory", p);
                     }
                 } else if let Err(e) = fs::remove_file(path) {
-                    eprintln!("rm: cannot remove '{}': {}", p, e);
+                    eprintln!("rm: cannot remove '{}': {}", p, format_io_error(&e));
                 }
             }
-            Err(e) => eprintln!("rm: cannot remove '{}': {}", p, e),
+            Err(e) => eprintln!("rm: cannot remove '{}': {}", p, format_io_error(&e)),
         }
     }
 }

@@ -11,6 +11,7 @@ use std::path::Path;
 use std::path::PathBuf;
 
 use crate::shell::Shell;
+use crate::shell::exec::helper::format_io_error;
 use crate::shell::parse::Cmd;
 
 #[derive(Default, Clone, Copy)]
@@ -51,7 +52,11 @@ pub fn ls(_shell: &mut Shell, cmd: &Cmd) {
         let metadata = match fs::symlink_metadata(p) {
             Ok(m) => m,
             Err(e) => {
-                eprintln!("ls: cannot access '{}': {}", p.display(), e);
+                eprintln!(
+                    "ls: cannot access '{}': {}",
+                    p.display(),
+                    format_io_error(&e)
+                );
                 continue;
             }
         };
@@ -94,7 +99,11 @@ fn list_single(path: &Path, options: LsOptions) {
     let meta = match fs::symlink_metadata(path) {
         Ok(m) => m,
         Err(e) => {
-            eprintln!("ls: cannot access '{}': {}", path.display(), e);
+            eprintln!(
+                "ls: cannot access '{}': {}",
+                path.display(),
+                format_io_error(&e)
+            );
             return;
         }
     };
@@ -128,7 +137,11 @@ fn list_directory(path: &Path, options: LsOptions, more_paths: bool) {
     let dir = match fs::read_dir(path) {
         Ok(d) => d,
         Err(e) => {
-            eprintln!("ls: cannot access '{}': {}", path.display(), e);
+            eprintln!(
+                "ls: cannot access '{}': {}",
+                path.display(),
+                format_io_error(&e)
+            );
             return;
         }
     };
@@ -159,7 +172,11 @@ fn list_directory(path: &Path, options: LsOptions, more_paths: bool) {
         let meta = match fs::symlink_metadata(item.path()) {
             Ok(m) => m,
             Err(e) => {
-                eprintln!("ls: error reading metadata for '{}': {}", name, e);
+                eprintln!(
+                    "ls: error reading metadata for '{}': {}",
+                    name,
+                    format_io_error(&e)
+                );
                 continue;
             }
         };
